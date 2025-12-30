@@ -1,0 +1,19 @@
+{
+  "TCP": {
+    "443": {
+      "HTTPS": true
+    }
+  },
+  "Web": {
+    "raspi-large.tail8c06d8.ts.net:443": {
+      "Handlers": {
+        "/": {
+          "Proxy": "https+insecure://192.168.178.151:443"
+        },
+        "/api": {
+          "Proxy": "http://127.0.0.1:4000"
+        }
+      }
+    }
+  }
+}
