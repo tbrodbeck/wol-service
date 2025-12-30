@@ -1,18 +1,119 @@
-# WolService
+# WoL Service
 
-To start your Phoenix server:
+A Wake-on-LAN service with web admin UI, built with Phoenix LiveView and designed to run behind Tailscale on a Raspberry Pi.
 
-* Run `mix setup` to install and setup dependencies
-* Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
+## Features
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+- **Web Admin UI** - One-click wake buttons for known devices
+- **REST API** - Programmatic access to wake functionality
+- **Tailscale Integration** - Secure access from anywhere on your tailnet
+- **NAS Proxy** - Secure gateway to legacy/unsupported devices
 
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
+## Architecture
 
-## Learn more
+```
+Internet → Tailscale → Raspberry Pi → Local Network
+                           │
+                           ├── /     → QNAP NAS (proxied)
+                           └── /app  → Phoenix WoL Service
+```
 
-* Official website: https://www.phoenixframework.org/
-* Guides: https://hexdocs.pm/phoenix/overview.html
-* Docs: https://hexdocs.pm/phoenix
-* Forum: https://elixirforum.com/c/phoenix-forum
-* Source: https://github.com/phoenixframework/phoenix
+The Pi acts as a secure gateway: only supported/updated devices are exposed to the Tailnet, while legacy devices (like unsupported NAS) stay isolated on the local network.
+
+## URLs (Tailnet only)
+
+| URL | Description |
+|-----|-------------|
+| `https://<hostname>/` | NAS web interface |
+| `https://<hostname>/app/` | WoL Admin UI |
+| `https://<hostname>/app/api/wake` | WoL REST API |
+
+## API
+
+### Wake a device
+
+```bash
+curl -X POST https://<hostname>/app/api/wake \
+  -H "Content-Type: application/json" \
+  -d {mac: 00:11:22:33:44:55}
+```
+
+**Response:**
+```json
+{"status": "ok", "message": "Magic packet sent to 00:11:22:33:44:55"}
+```
+
+## Prerequisites
+
+- Raspberry Pi (or any Linux device) on the same network as target devices
+- [Tailscale](https://tailscale.com/) installed and configured
+- Erlang/OTP 27+ and Elixir 1.18+
+
+## Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/tbrodbeck/wol-service.git
+   cd wol-service
+   ```
+
+2. Install dependencies:
+   ```bash
+   mix deps.get
+   ```
+
+3. Configure Tailscale Serve:
+   ```bash
+   sudo tailscale serve --bg --set-path /app http://127.0.0.1:4000
+   ```
+
+4. Start the server:
+   ```bash
+   mix phx.server
+   ```
+
+Or use the setup script:
+```bash
+./infrastructure/setup.sh
+```
+
+## Configuration
+
+### Adding Known Devices
+
+Edit `lib/wol_service_web/live/admin_live.ex`:
+
+```elixir
+@known_devices [
+  %{name: "My NAS", mac: "00:11:22:33:44:55", description: "Storage server"},
+  %{name: "Desktop", mac: "AA:BB:CC:DD:EE:FF", description: "Main workstation"}
+]
+```
+
+### Tailscale Serve Configuration
+
+See `infrastructure/tailscale-serve.json` for the current configuration.
+
+## Development
+
+```bash
+# Run tests
+mix test
+
+# Start dev server with live reload
+mix phx.server
+
+# Format code
+mix format
+```
+
+## Tech Stack
+
+- **Elixir 1.18** / **Erlang/OTP 27**
+- **Phoenix 1.8** with LiveView
+- **Tailwind CSS** with DaisyUI
+- **Tailscale** for secure networking
+
+## License
+
+MIT
