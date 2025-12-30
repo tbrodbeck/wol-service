@@ -14,15 +14,15 @@ defmodule WolServiceWeb.Router do
     plug :accepts, ["json"]
   end
 
+  # Admin UI at root (accessed via /app on Tailscale)
   scope "/", WolServiceWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live "/", AdminLive
   end
 
-  # API routes - served under /api via Tailscale Serve
-  # Tailscale strips the /api prefix, so routes here are at root
-  scope "/", WolServiceWeb do
+  # API routes (accessed via /app/api on Tailscale)
+  scope "/api", WolServiceWeb do
     pipe_through :api
 
     post "/wake", WakeController, :wake
