@@ -75,13 +75,21 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
 
     steps:
-      - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1.2.0
+      - name: Setup Tailscale
+        uses: tailscale/github-action@v3
         with:
-          host: ${{ secrets.RASPI_HOST }}
-          username: ${{ secrets.RASPI_USER }}
-          key: ${{ secrets.RASPI_SSH_KEY }}
-          script: |
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
+
+      - name: Deploy via SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.RASPI_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H raspi-large >> ~/.ssh/known_hosts 2>/dev/null
+
+          ssh -o StrictHostKeyChecking=no ${{ secrets.RASPI_USER }}@raspi-large << 'EOF'
             cd /home/t/wol_service
             git pull origin main
             mix deps.get --only prod
@@ -95,3 +103,4 @@ jobs:
             nohup mix phx.server > /tmp/phoenix.log 2>&1 &
 
             echo "Deployed successfully"
+          EOF
