@@ -67,3 +67,31 @@ jobs:
 
       - name: Run Dialyzer (type checking)
         run: mix dialyzer
+
+  deploy:
+    name: Deploy to Raspberry Pi
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.RASPI_HOST }}
+          username: ${{ secrets.RASPI_USER }}
+          key: ${{ secrets.RASPI_SSH_KEY }}
+          script: |
+            cd /home/t/wol_service
+            git pull origin main
+            mix deps.get --only prod
+            MIX_ENV=prod mix compile
+            MIX_ENV=prod mix assets.deploy
+
+            # Restart the service
+            pkill -f "mix phx.server" || true
+            sleep 2
+            source .env
+            nohup mix phx.server > /tmp/phoenix.log 2>&1 &
+
+            echo "Deployed successfully"
