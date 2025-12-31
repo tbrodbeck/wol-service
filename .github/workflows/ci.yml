@@ -99,7 +99,7 @@ jobs:
             # Restart the service
             pkill -f "mix phx.server" || true
             sleep 2
-            source .env
+            export $(grep -v '^#' .env | xargs)
             nohup mix phx.server > /tmp/phoenix.log 2>&1 &
 
             echo "Deployed successfully"
