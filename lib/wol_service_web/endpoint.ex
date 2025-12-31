@@ -32,7 +32,7 @@ defmodule WolServiceWeb.Endpoint do
     at: "/",
     from: :wol_service,
     gzip: not code_reloading?,
-    only: WolServiceWeb.static_paths() ++ ~w(favicon-),
+    only: WolServiceWeb.static_paths(),
     raise_on_missing_only: code_reloading?
 
   # Code reloading can be explicitly enabled under the
