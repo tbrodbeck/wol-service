@@ -26,7 +26,8 @@ import {hooks as colocatedHooks} from "phoenix-colocated/wol_service"
 import topbar from "../vendor/topbar"
 
 const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
-const liveSocket = new LiveSocket("/live", Socket, {
+// Socket path must match the app's base path (configured in Phoenix endpoint url: [path: "/app"])
+const liveSocket = new LiveSocket("/app/live", Socket, {
   longPollFallbackMs: 2500,
   params: {_csrf_token: csrfToken},
   hooks: {...colocatedHooks},

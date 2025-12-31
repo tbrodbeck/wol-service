@@ -1,0 +1,20 @@
+[Unit]
+Description=WoL Service - Phoenix LiveView App
+After=network.target tailscaled.service
+Wants=network.target
+
+[Service]
+Type=simple
+User=t
+Group=t
+WorkingDirectory=/home/t/wol_service
+EnvironmentFile=/home/t/wol_service/.env
+ExecStart=/usr/bin/mix phx.server
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=wol-service
+
+[Install]
+WantedBy=multi-user.target

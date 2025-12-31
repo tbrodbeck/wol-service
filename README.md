@@ -51,6 +51,8 @@ curl -X POST https://<hostname>/app/api/wake \
 
 ## Installation
 
+### Development Mode
+
 1. Clone the repository:
    ```bash
    git clone https://github.com/tbrodbeck/wol-service.git
@@ -67,14 +69,30 @@ curl -X POST https://<hostname>/app/api/wake \
    sudo tailscale serve --bg --set-path /app http://127.0.0.1:4000
    ```
 
-4. Start the server:
+4. Start the development server:
    ```bash
    mix phx.server
    ```
 
-Or use the setup script:
+### Production Mode
+
+Use the automated deployment script:
+
 ```bash
-./infrastructure/setup.sh
+./infrastructure/deploy.sh
+```
+
+This will:
+- Create `.env` file with generated secrets
+- Install dependencies and compile for production
+- Build and digest static assets
+- Set up systemd service
+- Configure Tailscale Serve
+
+Then start the service:
+```bash
+sudo systemctl start wol-service
+sudo journalctl -u wol-service -f  # View logs
 ```
 
 ## Configuration
