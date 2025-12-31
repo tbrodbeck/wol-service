@@ -74,26 +74,22 @@ curl -X POST https://<hostname>/app/api/wake \
    mix phx.server
    ```
 
-### Production Mode
+### Production Mode (Docker)
 
-Use the automated deployment script:
+The service runs in Docker on the Raspberry Pi. Deployment is automated via GitHub Actions on push to `main`.
 
+**Manual deployment:**
 ```bash
-./infrastructure/deploy.sh
+make build                    # Build image locally
+docker compose up -d          # Run with docker-compose
 ```
 
-This will:
-- Create `.env` file with generated secrets
-- Install dependencies and compile for production
-- Build and digest static assets
-- Set up systemd service
-- Configure Tailscale Serve
-
-Then start the service:
-```bash
-sudo systemctl start wol-service
-sudo journalctl -u wol-service -f  # View logs
-```
+**CI/CD Pipeline:**
+1. Push to `main` triggers GitHub Actions
+2. Tests run via `make check`
+3. Docker image built for `linux/arm64`
+4. Pushed to GitHub Container Registry
+5. Deployed to Pi via SSH
 
 ## Configuration
 
@@ -114,15 +110,15 @@ See `infrastructure/tailscale-serve.json` for the current configuration.
 
 ## Development
 
+Run `make` to see all available commands:
+
 ```bash
-# Run tests
-mix test
-
-# Start dev server with live reload
-mix phx.server
-
-# Format code
-mix format
+make              # Show all commands
+make test         # Run tests
+make format       # Format code
+make check        # Run all checks (compile, credo, format, test, dialyzer)
+make build        # Build Docker image locally
+make run          # Run Docker container locally
 ```
 
 ## Tech Stack
