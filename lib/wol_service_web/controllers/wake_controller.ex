@@ -7,6 +7,7 @@ defmodule WolServiceWeb.WakeController do
     case Wol.wake(mac) do
       :ok ->
         json(conn, %{status: "ok", message: "Magic packet sent to #{mac}"})
+
       {:error, reason} ->
         conn
         |> put_status(:internal_server_error)

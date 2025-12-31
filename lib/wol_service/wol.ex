@@ -36,11 +36,11 @@ defmodule WolService.Wol do
   """
   def wake(mac_string) do
     packet = build_magic_packet(mac_string)
-    
+
     {:ok, socket} = :gen_udp.open(0, [:binary, {:broadcast, true}])
     result = :gen_udp.send(socket, @broadcast_address, @wol_port, packet)
     :gen_udp.close(socket)
-    
+
     result
   end
 end

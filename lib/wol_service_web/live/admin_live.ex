@@ -21,8 +21,8 @@ defmodule WolServiceWeb.AdminLive do
     <div class="min-h-screen bg-base-200 p-8">
       <div class="max-w-2xl mx-auto">
         <h1 class="text-3xl font-bold mb-8">Wake-on-LAN Admin</h1>
-
-        <!-- Known Devices -->
+        
+    <!-- Known Devices -->
         <div class="card bg-base-100 shadow-xl mb-6">
           <div class="card-body">
             <h2 class="card-title">Known Devices</h2>
@@ -49,9 +49,9 @@ defmodule WolServiceWeb.AdminLive do
                           Wake
                         </button>
                       </td>
-                      <td class="font-medium"><%= device.name %></td>
-                      <td class="font-mono text-sm"><%= device.mac %></td>
-                      <td class="text-base-content/60"><%= device.description %></td>
+                      <td class="font-medium">{device.name}</td>
+                      <td class="font-mono text-sm">{device.mac}</td>
+                      <td class="text-base-content/60">{device.description}</td>
                     </tr>
                   <% end %>
                 </tbody>
@@ -59,8 +59,8 @@ defmodule WolServiceWeb.AdminLive do
             </div>
           </div>
         </div>
-
-        <!-- Custom MAC -->
+        
+    <!-- Custom MAC -->
         <div class="card bg-base-100 shadow-xl">
           <div class="card-body">
             <h2 class="card-title">Wake Custom Device</h2>
@@ -80,11 +80,11 @@ defmodule WolServiceWeb.AdminLive do
             </form>
           </div>
         </div>
-
-        <!-- Flash Message -->
+        
+    <!-- Flash Message -->
         <%= if @flash_message do %>
           <div class={"alert mt-6 " <> if(@flash_type == :success, do: "alert-success", else: "alert-error")}>
-            <span><%= @flash_message %></span>
+            <span>{@flash_message}</span>
           </div>
         <% end %>
       </div>

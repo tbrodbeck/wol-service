@@ -42,3 +42,6 @@ npm-debug.log
 # Environment variables
 .env
 
+# Dialyzer PLT files
+/priv/plts/
+
