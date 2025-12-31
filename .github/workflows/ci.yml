@@ -103,6 +103,4 @@ jobs:
 
       - name: Restart service
         run: |
-          ssh ${{ secrets.RASPI_USER }}@raspi-large "pkill -f 'mix phx.server' || true"
-          sleep 2
-          ssh ${{ secrets.RASPI_USER }}@raspi-large "cd /home/t/wol_service && export \$(grep -v '^#' .env | xargs) && nohup mix phx.server > /tmp/phoenix.log 2>&1 & sleep 1 && echo 'Started'"
+          ssh ${{ secrets.RASPI_USER }}@raspi-large "cd /home/t/wol_service && (killall beam.smp 2>/dev/null || true) && sleep 2 && export \$(grep -v '^#' .env | xargs) && nohup mix phx.server > /tmp/phoenix.log 2>&1 & sleep 2 && pgrep -f beam && echo 'Started'"
