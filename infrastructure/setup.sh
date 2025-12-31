@@ -17,8 +17,8 @@ MIX_ENV=prod mix phx.server &
 echo "Setup complete!"
 echo ""
 echo "URLs:"
-echo "  NAS:      https://raspi-large.tail8c06d8.ts.net/"
-echo "  Admin UI: https://raspi-large.tail8c06d8.ts.net/app/"
-echo "  WoL API:  https://raspi-large.tail8c06d8.ts.net/app/api/wake"
+echo "  NAS:      https://raspi-large.bass-mora.ts.net/"
+echo "  Admin UI: https://raspi-large.bass-mora.ts.net/app/"
+echo "  WoL API:  https://raspi-large.bass-mora.ts.net/app/api/wake"
 echo ""
 sudo tailscale serve status
