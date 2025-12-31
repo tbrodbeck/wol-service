@@ -37,11 +37,12 @@ if config_env() == :prod do
       """
 
   host = System.get_env("PHX_HOST") || "example.com"
+  path_prefix = System.get_env("PHX_PATH_PREFIX", "/app")
 
   config :wol_service, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
 
   config :wol_service, WolServiceWeb.Endpoint,
-    url: [host: host, port: 443, scheme: "https", path: "/app"],
+    url: [host: host, port: 443, scheme: "https", path: path_prefix],
     http: [
       # Enable IPv6 and bind on all interfaces.
       # Set it to  {0, 0, 0, 0, 0, 0, 0, 1} for local network only access.
