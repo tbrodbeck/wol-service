@@ -82,25 +82,27 @@ jobs:
           oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
           tags: tag:ci
 
-      - name: Deploy via SSH
+      - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.RASPI_SSH_KEY }}" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -H raspi-large >> ~/.ssh/known_hosts 2>/dev/null
 
-          ssh -o StrictHostKeyChecking=no ${{ secrets.RASPI_USER }}@raspi-large << 'EOF'
-            cd /home/t/wol_service
-            git pull origin main
-            mix deps.get --only prod
-            MIX_ENV=prod mix compile
-            MIX_ENV=prod mix assets.deploy
+      - name: Pull latest code
+        run: ssh ${{ secrets.RASPI_USER }}@raspi-large "cd /home/t/wol_service && git pull origin main"
 
-            # Restart the service
-            pkill -f "mix phx.server" || true
-            sleep 2
-            export $(grep -v '^#' .env | xargs)
-            nohup mix phx.server > /tmp/phoenix.log 2>&1 &
+      - name: Install dependencies
+        run: ssh ${{ secrets.RASPI_USER }}@raspi-large "cd /home/t/wol_service && mix deps.get --only prod"
 
-            echo "Deployed successfully"
-          EOF
+      - name: Compile
+        run: ssh ${{ secrets.RASPI_USER }}@raspi-large "cd /home/t/wol_service && MIX_ENV=prod mix compile"
+
+      - name: Build assets
+        run: ssh ${{ secrets.RASPI_USER }}@raspi-large "cd /home/t/wol_service && MIX_ENV=prod mix assets.deploy"
+
+      - name: Restart service
+        run: |
+          ssh ${{ secrets.RASPI_USER }}@raspi-large "pkill -f 'mix phx.server' || true"
+          sleep 2
+          ssh ${{ secrets.RASPI_USER }}@raspi-large "cd /home/t/wol_service && export \$(grep -v '^#' .env | xargs) && nohup mix phx.server > /tmp/phoenix.log 2>&1 & sleep 1 && echo 'Started'"
