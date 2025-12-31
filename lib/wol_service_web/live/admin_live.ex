@@ -30,18 +30,15 @@ defmodule WolServiceWeb.AdminLive do
               <table class="table">
                 <thead>
                   <tr>
+                    <th></th>
                     <th>Name</th>
                     <th>MAC Address</th>
                     <th>Description</th>
-                    <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
                   <%= for device <- @devices do %>
                     <tr>
-                      <td class="font-medium"><%= device.name %></td>
-                      <td class="font-mono text-sm"><%= device.mac %></td>
-                      <td class="text-gray-500"><%= device.description %></td>
                       <td>
                         <button
                           class="btn btn-primary btn-sm"
@@ -52,6 +49,9 @@ defmodule WolServiceWeb.AdminLive do
                           Wake
                         </button>
                       </td>
+                      <td class="font-medium"><%= device.name %></td>
+                      <td class="font-mono text-sm"><%= device.mac %></td>
+                      <td class="text-base-content/60"><%= device.description %></td>
                     </tr>
                   <% end %>
                 </tbody>
