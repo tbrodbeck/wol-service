@@ -4,7 +4,8 @@ defmodule WolServiceWeb.AdminLive do
   alias WolService.Wol
 
   @known_devices [
-    %{name: "t1llusNAS", mac: "00:08:9b:d2:df:42", description: "QNAP NAS"}
+    %{name: "t1llusNAS", mac: "00:08:9b:d2:df:42", description: "QNAP NAS"},
+    %{name: "Windows PC", mac: "48:4d:7e:a2:d6:b7", description: "Windows Desktop"}
   ]
 
   def mount(_params, _session, socket) do
