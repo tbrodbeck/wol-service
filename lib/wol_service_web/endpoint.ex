@@ -1,6 +1,14 @@
 defmodule WolServiceWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :wol_service
 
+  @doc """
+  Returns the configured URL path prefix (e.g., "/app") or empty string.
+  Used by templates to pass config to JavaScript.
+  """
+  def path_prefix do
+    Application.get_env(:wol_service, __MODULE__)[:url][:path] || ""
+  end
+
   # The session will be stored in the cookie and signed,
   # this means its contents can be read but not tampered with.
   # Set :encryption_salt if you would also like to encrypt it.
